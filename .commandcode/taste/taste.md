@@ -1,0 +1,1 @@
+- Communicates in Indonesian and expects Indonesian throughout: replies, UI labels, error/snackbar messages, and code comments. Confidence: 0.6

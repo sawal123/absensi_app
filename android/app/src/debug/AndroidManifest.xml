@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Hanya build debug: izinkan HTTP lokal ke Laravel (10.0.2.2/LAN). -->
+    <application android:usesCleartextTraffic="true" />
+</manifest>

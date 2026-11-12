@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Profil juga untuk pengujian internal dengan server HTTP lokal. -->
+    <application android:usesCleartextTraffic="true" />
+</manifest>
