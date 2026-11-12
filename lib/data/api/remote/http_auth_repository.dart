@@ -122,4 +122,10 @@ class HttpAuthRepository extends AuthRepository {
       await ApiSession.clear();
     }
   }
+
+  @override
+  Future<void> deleteAccount({required String password}) async {
+    await _client.delete('/auth/account', body: {'password': password});
+    await ApiSession.clear();
+  }
 }

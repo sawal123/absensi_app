@@ -37,5 +37,7 @@ abstract class HrApi {
 
   Future<void> enrollFace(String photoPath);
 
+  Future<void> deleteFace();
+
   Future<List<AuditLogEntry>> getAuditLogs({int limit = 100});
 }

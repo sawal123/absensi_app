@@ -124,6 +124,11 @@ class HttpHrApi implements HrApi {
   }
 
   @override
+  Future<void> deleteFace() async {
+    await _client.delete('/auth/face');
+  }
+
+  @override
   Future<List<AuditLogEntry>> getAuditLogs({int limit = 100}) async {
     final decoded = await _client.get(
       '/audit-logs',

@@ -48,6 +48,17 @@ flutter run --dart-define=USE_DUMMY_API=true
 Mode dummy memakai SQLite lokal; liveness/face match dan export laporan
 memerlukan backend aktif.
 
+## SaaS / Multi-tenant
+
+Backend sudah memiliki fondasi multi-tenant `tenant_id` + super admin. Namun
+**pendaftaran publik belum dibuka**: tenant hanya dibuat oleh super admin
+melalui `/api/platform/tenants`. Aplikasi mobile tidak menampilkan menu daftar,
+dan akun `super_admin` hanya untuk panel/API platform.
+
+Satu email saat ini terikat ke satu tenant. Detail arsitektur, provisioning,
+kuota, dan batasannya ada di
+[`../absensi_backend/SAAS_FOUNDATION.md`](../absensi_backend/SAAS_FOUNDATION.md).
+
 ## Akun demo backend
 
 | Peran | Email | Password |
@@ -92,6 +103,16 @@ Tanpa langkah ini, deteksi wajah/liveness di iOS tidak akan berjalan.
 flutter analyze
 flutter test
 ```
+
+## Publikasi Google Play
+
+Lihat [`PLAY_STORE_CHECKLIST.md`](PLAY_STORE_CHECKLIST.md) untuk signing,
+URL backend HTTPS, data safety, app access, dan isian Play Console.
+
+Sebelum izin lokasi/kamera, aplikasi menampilkan layar **Persetujuan Privasi &
+Data**. Pengguna dapat menghapus data wajah atau seluruh akun dari menu Profil.
+Kebijakan privasi tersedia in-app dan sebagai halaman statis di backend
+(`/privacy.html`, `/data-deletion.html`).
 
 ## Struktur
 

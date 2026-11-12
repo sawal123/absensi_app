@@ -140,6 +140,11 @@ class DummyHrApi implements HrApi {
   }
 
   @override
+  Future<void> deleteFace() async {
+    throw StateError('Penghapusan data wajah memerlukan backend Laravel aktif.');
+  }
+
+  @override
   Future<List<AuditLogEntry>> getAuditLogs({int limit = 100}) async => const [];
 
   OvertimeRequest _overtime(Map<String, Object?> item) {

@@ -20,6 +20,7 @@ import '../admin/settings_screen.dart';
 import '../shared/camera_capture_screen.dart';
 import '../shared/notifications_screen.dart';
 import '../shared/overtime_screen.dart';
+import '../shared/privacy_policy_screen.dart';
 import '../supervisor/shifts_screen.dart';
 
 class ProfileTab extends StatelessWidget {
@@ -69,6 +70,17 @@ class ProfileTab extends StatelessWidget {
                                 color: AppPalette.muted,
                               ),
                             ),
+                            if ((user?.tenantName ?? '').isNotEmpty) ...[
+                              const SizedBox(height: 3),
+                              Text(
+                                'Perusahaan · ${user!.tenantName}',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppPalette.primary,
+                                ),
+                              ),
+                            ],
                             const SizedBox(height: 8),
                             Row(
                               children: [
@@ -195,6 +207,32 @@ class ProfileTab extends StatelessWidget {
                             ? 'Wajah terdaftar · daftar ulang'
                             : 'Daftarkan wajah',
                         onTap: () => _enrollFace(context),
+                      ),
+                      if (user?.faceEnrolled ?? false) ...[
+                        const Divider(height: 1, indent: 58),
+                        _MenuItem(
+                          icon: Icons.delete_forever_outlined,
+                          label: 'Hapus data wajah',
+                          danger: true,
+                          onTap: () => _deleteFace(context),
+                        ),
+                      ],
+                      const Divider(height: 1, indent: 58),
+                      _MenuItem(
+                        icon: Icons.policy_outlined,
+                        label: 'Kebijakan privasi',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const PrivacyPolicyScreen(),
+                          ),
+                        ),
+                      ),
+                      const Divider(height: 1, indent: 58),
+                      _MenuItem(
+                        icon: Icons.person_remove_outlined,
+                        label: 'Hapus akun & data',
+                        danger: true,
+                        onTap: () => _deleteAccount(context),
                       ),
                       const Divider(height: 1, indent: 58),
                       _MenuItem(
@@ -365,6 +403,99 @@ class ProfileTab extends StatelessWidget {
     } catch (error) {
       if (!context.mounted) return;
       _snack(context, 'Gagal export laporan: $error');
+    }
+  }
+
+  Future<void> _deleteFace(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Hapus data wajah?'),
+        content: const Text(
+          'Foto referensi dan hash wajah akan dihapus. Absensi dengan face '
+          'match tidak dapat dilakukan sampai wajah didaftarkan ulang.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Batal'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Hapus'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final hr = context.read<HrProvider>();
+    final ok = await hr.deleteFace();
+    if (!context.mounted) return;
+
+    if (ok) {
+      await context.read<AuthProvider>().refreshUser();
+      if (!context.mounted) return;
+      _snack(context, 'Data wajah dihapus.');
+    } else {
+      _snack(context, hr.error ?? 'Gagal menghapus data wajah.');
+      hr.clearError();
+    }
+  }
+
+  Future<void> _deleteAccount(BuildContext context) async {
+    final controller = TextEditingController();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Hapus akun & data?'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'Seluruh data pribadi, absensi, cuti, lembur, payroll, dan '
+              'wajah akan dihapus permanen. Tindakan ini tidak dapat '
+              'dibatalkan.',
+              style: TextStyle(fontSize: 12, height: 1.5),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'Konfirmasi password',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Batal'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Hapus permanen'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final auth = context.read<AuthProvider>();
+    final ok = await auth.deleteAccount(controller.text);
+    if (!context.mounted) return;
+
+    if (!ok) {
+      _snack(context, auth.error ?? 'Gagal menghapus akun.');
+      auth.clearError();
     }
   }
 

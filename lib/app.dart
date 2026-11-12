@@ -20,6 +20,8 @@ import 'providers/my_requests_provider.dart';
 import 'providers/payroll_provider.dart';
 import 'screens/employee/employee_shell.dart';
 import 'screens/login_screen.dart';
+import 'screens/shared/consent_gate.dart';
+import 'screens/shared/platform_only_screen.dart';
 import 'screens/supervisor/supervisor_shell.dart';
 import 'services/image_service.dart';
 import 'services/location_service.dart';
@@ -57,92 +59,101 @@ class AuthGate extends StatelessWidget {
           return const LoginScreen();
         }
 
+        if (user.isSuperAdmin) {
+          return const PlatformOnlyScreen();
+        }
+
         if (user.isManager) {
-          return MultiProvider(
+          return ConsentGate(
+            key: ValueKey('consent-${user.id}'),
+            userId: user.id!,
+            child: MultiProvider(
+              providers: [
+                ChangeNotifierProvider<HrProvider>(
+                  key: ValueKey('hr-manager-${user.id}'),
+                  create: (context) =>
+                      HrProvider(api: context.read<HrApi>(), user: user)
+                        ..load(),
+                ),
+                ChangeNotifierProvider<AdminProvider>(
+                  key: ValueKey('admin-${user.id}'),
+                  create: (context) => AdminProvider(
+                    authRepository: context.read<AuthRepository>(),
+                    attendanceRepository: context.read<AttendanceRepository>(),
+                    settingsRepository: context.read<SettingsRepository>(),
+                    shiftRepository: context.read<ShiftRepository>(),
+                  )..load(),
+                ),
+                ChangeNotifierProvider<ApprovalProvider>(
+                  key: ValueKey('approvals-${user.id}'),
+                  create: (context) => ApprovalProvider(
+                    api: context.read<AbsensiApi>(),
+                    reviewerId: user.id!,
+                    reviewerName: user.name,
+                  )..load(),
+                ),
+                ChangeNotifierProvider<PayrollProvider>(
+                  key: ValueKey('payroll-admin-${user.id}'),
+                  create: (context) => PayrollProvider(
+                    authRepository: context.read<AuthRepository>(),
+                    attendanceRepository: context.read<AttendanceRepository>(),
+                    payrollRepository: context.read<PayrollRepository>(),
+                    shiftRepository: context.read<ShiftRepository>(),
+                    settingsRepository: context.read<SettingsRepository>(),
+                    api: context.read<AbsensiApi>(),
+                    adminId: user.id!,
+                  )..load(),
+                ),
+              ],
+              child: const SupervisorShell(),
+            ),
+          );
+        }
+
+        return ConsentGate(
+          key: ValueKey('consent-${user.id}'),
+          userId: user.id!,
+          child: MultiProvider(
             providers: [
               ChangeNotifierProvider<HrProvider>(
-                key: ValueKey('hr-manager-${user.id}'),
-                create: (context) => HrProvider(
-                  api: context.read<HrApi>(),
-                  user: user,
-                )..load(),
+                key: ValueKey('hr-employee-${user.id}'),
+                create: (context) =>
+                    HrProvider(api: context.read<HrApi>(), user: user)..load(),
               ),
-              ChangeNotifierProvider<AdminProvider>(
-                key: ValueKey('admin-${user.id}'),
-                create: (context) => AdminProvider(
-                  authRepository: context.read<AuthRepository>(),
-                  attendanceRepository: context.read<AttendanceRepository>(),
+              ChangeNotifierProvider<AttendanceProvider>(
+                key: ValueKey('employee-${user.id}'),
+                create: (context) => AttendanceProvider(
+                  userId: user.id!,
+                  repository: context.read<AttendanceRepository>(),
                   settingsRepository: context.read<SettingsRepository>(),
                   shiftRepository: context.read<ShiftRepository>(),
+                  locationService: context.read<LocationService>(),
+                  imageService: context.read<ImageService>(),
                 )..load(),
               ),
-              ChangeNotifierProvider<ApprovalProvider>(
-                key: ValueKey('approvals-${user.id}'),
-                create: (context) => ApprovalProvider(
+              ChangeNotifierProvider<MyRequestsProvider>(
+                key: ValueKey('requests-${user.id}'),
+                create: (context) => MyRequestsProvider(
                   api: context.read<AbsensiApi>(),
-                  reviewerId: user.id!,
-                  reviewerName: user.name,
+                  hrApi: context.read<HrApi>(),
+                  employeeId: user.id!,
+                  year: DateTime.now().year,
                 )..load(),
               ),
-              ChangeNotifierProvider<PayrollProvider>(
-                key: ValueKey('payroll-admin-${user.id}'),
-                create: (context) => PayrollProvider(
-                  authRepository: context.read<AuthRepository>(),
+              ChangeNotifierProvider<EmployeePayrollProvider>(
+                key: ValueKey('payroll-${user.id}'),
+                create: (context) => EmployeePayrollProvider(
+                  employee: user,
                   attendanceRepository: context.read<AttendanceRepository>(),
                   payrollRepository: context.read<PayrollRepository>(),
                   shiftRepository: context.read<ShiftRepository>(),
                   settingsRepository: context.read<SettingsRepository>(),
                   api: context.read<AbsensiApi>(),
-                  adminId: user.id!,
                 )..load(),
               ),
             ],
-            child: const SupervisorShell(),
-          );
-        }
-
-        return MultiProvider(
-          providers: [
-            ChangeNotifierProvider<HrProvider>(
-              key: ValueKey('hr-employee-${user.id}'),
-              create: (context) => HrProvider(
-                api: context.read<HrApi>(),
-                user: user,
-              )..load(),
-            ),
-            ChangeNotifierProvider<AttendanceProvider>(
-              key: ValueKey('employee-${user.id}'),
-              create: (context) => AttendanceProvider(
-                userId: user.id!,
-                repository: context.read<AttendanceRepository>(),
-                settingsRepository: context.read<SettingsRepository>(),
-                shiftRepository: context.read<ShiftRepository>(),
-                locationService: context.read<LocationService>(),
-                imageService: context.read<ImageService>(),
-              )..load(),
-            ),
-            ChangeNotifierProvider<MyRequestsProvider>(
-              key: ValueKey('requests-${user.id}'),
-              create: (context) => MyRequestsProvider(
-                api: context.read<AbsensiApi>(),
-                hrApi: context.read<HrApi>(),
-                employeeId: user.id!,
-                year: DateTime.now().year,
-              )..load(),
-            ),
-            ChangeNotifierProvider<EmployeePayrollProvider>(
-              key: ValueKey('payroll-${user.id}'),
-              create: (context) => EmployeePayrollProvider(
-                employee: user,
-                attendanceRepository: context.read<AttendanceRepository>(),
-                payrollRepository: context.read<PayrollRepository>(),
-                shiftRepository: context.read<ShiftRepository>(),
-                settingsRepository: context.read<SettingsRepository>(),
-                api: context.read<AbsensiApi>(),
-              )..load(),
-            ),
-          ],
-          child: const EmployeeShell(),
+            child: const EmployeeShell(),
+          ),
         );
       },
     );

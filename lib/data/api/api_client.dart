@@ -46,8 +46,11 @@ class ApiClient {
   Future<dynamic> patch(String path, {Object? body, Map<String, String>? query}) =>
       _send('PATCH', path, body: body, query: query);
 
-  Future<dynamic> delete(String path, {Map<String, String>? query}) =>
-      _send('DELETE', path, query: query);
+  Future<dynamic> delete(
+    String path, {
+    Map<String, String>? query,
+    Object? body,
+  }) => _send('DELETE', path, query: query, body: body);
 
   Future<dynamic> multipart(
     String path, {
@@ -117,7 +120,7 @@ class ApiClient {
       case 'PATCH':
         response = await _client.patch(uri, headers: _headers, body: encoded);
       case 'DELETE':
-        response = await _client.delete(uri, headers: _headers);
+        response = await _client.delete(uri, headers: _headers, body: encoded);
       default:
         throw ApiException('Metode HTTP tidak didukung: $method');
     }

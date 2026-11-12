@@ -11,4 +11,16 @@ abstract final class ApiConfig {
     'API_BASE_URL',
     defaultValue: 'http://10.0.2.2:8000/api',
   );
+
+  /// URL publik kebijakan privasi (wajib untuk Google Play).
+  static const String privacyPolicyUrl = String.fromEnvironment(
+    'PRIVACY_POLICY_URL',
+    defaultValue: '',
+  );
+
+  /// Kontak dukungan/permintaan data.
+  static const String supportEmail = String.fromEnvironment(
+    'SUPPORT_EMAIL',
+    defaultValue: 'support@absensi.example',
+  );
 }

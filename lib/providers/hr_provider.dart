@@ -150,6 +150,22 @@ class HrProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> deleteFace() async {
+    _busy = true;
+    _error = null;
+    notifyListeners();
+    try {
+      await _api.deleteFace();
+      return true;
+    } catch (error) {
+      _error = _message(error);
+      return false;
+    } finally {
+      _busy = false;
+      notifyListeners();
+    }
+  }
+
   Future<bool> saveHoliday(Holiday holiday) async {
     _busy = true;
     _error = null;

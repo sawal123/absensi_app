@@ -65,6 +65,30 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> deleteAccount(String password) async {
+    _busy = true;
+    _error = null;
+    notifyListeners();
+    try {
+      await _repository.deleteAccount(password: password);
+      await _session.clear();
+      _currentUser = null;
+      return true;
+    } catch (error) {
+      _error = error.toString().replaceFirst('ApiException: ', '');
+      return false;
+    } finally {
+      _busy = false;
+      notifyListeners();
+    }
+  }
+
+  void clearError() {
+    if (_error == null) return;
+    _error = null;
+    notifyListeners();
+  }
+
   Future<void> refreshUser() async {
     final id = _currentUser?.id;
     if (id == null) return;

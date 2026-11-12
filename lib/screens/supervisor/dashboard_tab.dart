@@ -78,7 +78,10 @@ class DashboardTab extends StatelessWidget {
                 greeting: greetingFor(DateTime.now()),
                 name: user?.name ?? 'Atasan',
                 initials: initials(user?.name ?? '?'),
-                meta: 'Atasan • Tim Operasional',
+                meta: [
+                  if ((user?.tenantName ?? '').isNotEmpty) user!.tenantName,
+                  'Atasan',
+                ].join(' • '),
                 onBellTap: () => _openNotifications(context),
               ),
               Padding(

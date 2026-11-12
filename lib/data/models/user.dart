@@ -11,6 +11,10 @@ class User {
     this.nip = '',
     this.officeLocationId,
     this.officeName = '',
+    this.tenantId,
+    this.tenantName = '',
+    this.tenantCode = '',
+    this.isSuperAdmin = false,
     this.faceEnrolled = false,
     required this.createdAt,
   });
@@ -26,6 +30,10 @@ class User {
   final String nip;
   final int? officeLocationId;
   final String officeName;
+  final int? tenantId;
+  final String tenantName;
+  final String tenantCode;
+  final bool isSuperAdmin;
   final bool faceEnrolled;
   final DateTime createdAt;
 
@@ -45,6 +53,10 @@ class User {
     String? nip,
     int? officeLocationId,
     String? officeName,
+    int? tenantId,
+    String? tenantName,
+    String? tenantCode,
+    bool? isSuperAdmin,
     bool? faceEnrolled,
     DateTime? createdAt,
   }) {
@@ -58,6 +70,10 @@ class User {
       nip: nip ?? this.nip,
       officeLocationId: officeLocationId ?? this.officeLocationId,
       officeName: officeName ?? this.officeName,
+      tenantId: tenantId ?? this.tenantId,
+      tenantName: tenantName ?? this.tenantName,
+      tenantCode: tenantCode ?? this.tenantCode,
+      isSuperAdmin: isSuperAdmin ?? this.isSuperAdmin,
       faceEnrolled: faceEnrolled ?? this.faceEnrolled,
       createdAt: createdAt ?? this.createdAt,
     );
@@ -87,6 +103,10 @@ class User {
       nip: (map['nip'] as String?) ?? '',
       officeLocationId: (map['office_location_id'] as num?)?.toInt(),
       officeName: (map['office_location'] as String?) ?? '',
+      tenantId: (map['tenant_id'] as num?)?.toInt(),
+      tenantName: (map['tenant_name'] as String?) ?? '',
+      tenantCode: (map['tenant_code'] as String?) ?? '',
+      isSuperAdmin: map['is_super_admin'] == true,
       faceEnrolled: map['face_enrolled'] == true,
       createdAt: parseServerDate(map['created_at']) ?? DateTime.now(),
     );

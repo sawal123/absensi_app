@@ -108,4 +108,10 @@ class AuthRepository {
 
   /// Local mode tidak memiliki sesi server.
   Future<void> logout() async {}
+
+  Future<void> deleteAccount({required String password}) async {
+    throw UnsupportedError(
+      'Penghapusan akun memerlukan backend Laravel aktif.',
+    );
+  }
 }
