@@ -26,9 +26,16 @@ audit log.
 ## Menjalankan
 
 Backend harus aktif terlebih dahulu (lihat `../absensi_backend/README.md`).
+Default aplikasi memakai backend produksi `https://absen.temuanspace.com/api`.
 
 ```bash
 flutter pub get
+flutter run
+```
+
+Untuk development lokal, timpa base URL:
+
+```bash
 flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api
 ```
 
@@ -58,14 +65,15 @@ dan akun `super_admin` hanya untuk panel/API platform.
 Satu email saat ini terikat ke satu tenant. Detail arsitektur, provisioning,
 kuota, dan batasannya ada di
 [`../absensi_backend/SAAS_FOUNDATION.md`](../absensi_backend/SAAS_FOUNDATION.md).
+Riwayat implementasi ada di
+[`../absensi_backend/SAAS_HISTORY.md`](../absensi_backend/SAAS_HISTORY.md).
 
-## Akun demo backend
+## Akun backend
 
-| Peran | Email | Password |
-|---|---|---|
-| Admin | admin@absensi.com | admin123 |
-| Atasan | dewi@absensi.com | 123456 |
-| Karyawan | citra@absensi.com | 123456 |
+Login memakai akun yang dibuat di backend. Seeder produksi hanya membuat akun
+admin (lihat [`../absensi_backend/README.md`](../absensi_backend/README.md)).
+Layar login tidak lagi menampilkan akun demo; karyawan dibuat manual oleh admin
+melalui menu Pengguna.
 
 ## Anti-fraud
 

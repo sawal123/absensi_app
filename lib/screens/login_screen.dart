@@ -31,11 +31,6 @@ class _LoginScreenState extends State<LoginScreen> {
     await auth.login(_emailController.text.trim(), _passwordController.text);
   }
 
-  void _fillDemo(String email, String password) {
-    _emailController.text = email;
-    _passwordController.text = password;
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -62,16 +57,21 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: scheme.onPrimary.withValues(alpha: 0.18),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Icon(
-                          Icons.fingerprint,
-                          size: 38,
-                          color: scheme.onPrimary,
+                        alignment: Alignment.center,
+                        child: Text(
+                          'TW',
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.w900,
+                            color: scheme.onPrimary,
+                            letterSpacing: -0.5,
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      'Absensi Karyawan',
+                      'Temuan Work',
                       style: theme.textTheme.headlineSmall?.copyWith(
                         color: scheme.onPrimary,
                         fontWeight: FontWeight.w800,
@@ -186,113 +186,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    _DemoCredentials(onSelect: _fillDemo),
                   ],
                 ),
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DemoCredentials extends StatelessWidget {
-  const _DemoCredentials({required this.onSelect});
-
-  final void Function(String email, String password) onSelect;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: scheme.onPrimary.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Akun demo',
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: scheme.onPrimary,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 8),
-          _DemoRow(
-            label: 'Admin',
-            detail: 'admin@absensi.com / admin123',
-            onTap: () => onSelect('admin@absensi.com', 'admin123'),
-          ),
-          const SizedBox(height: 6),
-          _DemoRow(
-            label: 'Karyawan',
-            detail: 'budi@absensi.com / 123456',
-            onTap: () => onSelect('budi@absensi.com', '123456'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DemoRow extends StatelessWidget {
-  const _DemoRow({
-    required this.label,
-    required this.detail,
-    required this.onTap,
-  });
-
-  final String label;
-  final String detail;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
-                color: scheme.onPrimary.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                label,
-                style: TextStyle(
-                  color: scheme.onPrimary,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                detail,
-                style: TextStyle(
-                  color: scheme.onPrimary.withValues(alpha: 0.9),
-                  fontSize: 12.5,
-                ),
-              ),
-            ),
-            Icon(
-              Icons.tap_and_play,
-              size: 16,
-              color: scheme.onPrimary.withValues(alpha: 0.7),
-            ),
-          ],
         ),
       ),
     );

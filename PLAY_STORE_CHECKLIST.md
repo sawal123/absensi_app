@@ -52,13 +52,13 @@ Aktifkan **Play App Signing** saat membuat aplikasi di Play Console. Simpan
 keystore upload di tempat aman; kehilangan kunci dapat menghambat update.
 
 ### b. Backend publik HTTPS
-Aplikasi default memakai `10.0.2.2` (emulator). Build produksi wajib memakai
-domain HTTPS yang dapat diakses reviewer:
+Aplikasi default memakai `https://absen.temuanspace.com/api`. Backend wajib
+dapat diakses reviewer:
 
 ```bash
 flutter build appbundle --release \
-  --dart-define=API_BASE_URL=https://api.perusahaan-anda.com/api \
-  --dart-define=PRIVACY_POLICY_URL=https://api.perusahaan-anda.com/privacy.html \
+  --dart-define=API_BASE_URL=https://absen.temuanspace.com/api \
+  --dart-define=PRIVACY_POLICY_URL=https://absen.temuanspace.com/privacy.html \
   --dart-define=SUPPORT_EMAIL=hr@perusahaan-anda.com
 ```
 
@@ -68,8 +68,8 @@ Backend juga harus berjalan, sudah di-seed, dan memiliki akun demo yang aktif.
 Upload `absensi_backend/public/privacy.html` bersama backend sehingga dapat
 diakses tanpa login, misalnya:
 
-- `https://api.perusahaan-anda.com/privacy.html`
-- `https://api.perusahaan-anda.com/data-deletion.html`
+- `https://absen.temuanspace.com/privacy.html`
+- `https://absen.temuanspace.com/data-deletion.html`
 
 Ganti `hr@example.com` dan alamat perusahaan di kedua halaman.
 
@@ -85,11 +85,9 @@ Play Console menerima **Android App Bundle** untuk aplikasi baru. Gunakan
 ## 2. Isian Play Console
 
 ### App access
-Sediakan akun demo dan catatan:
+Buat akun khusus review melalui menu Pengguna (peran admin atau karyawan),
+lalu isi kredensialnya di Play Console. Jangan memakai akun admin produksi.
 
-- Admin: `admin@absensi.com` / `admin123`
-- Atasan: `dewi@absensi.com` / `123456`
-- Karyawan: `citra@absensi.com` / `123456`
 - Catatan: absensi memerlukan lokasi kantor dan kamera. Fitur lain (dashboard,
   cuti, persetujuan, lembur, payroll, notifikasi) dapat diakses tanpa absen.
 
@@ -124,7 +122,7 @@ Play mensyaratkan alur hapus akun + URL publik untuk aplikasi yang memiliki
 akun. Keduanya sudah disiapkan:
 
 - In-app: **Profil → Hapus akun & data** (konfirmasi password).
-- Web: `https://api.perusahaan-anda.com/data-deletion.html`
+- Web: `https://absen.temuanspace.com/data-deletion.html`
 - Server menghapus baris pengguna, absensi, cuti, lembur, payroll, file selfie,
   foto wajah, lampiran, serta menganonimkan payload audit log.
 
@@ -180,8 +178,8 @@ flutter analyze
 flutter test
 
 flutter build appbundle --release \
-  --dart-define=API_BASE_URL=https://api.perusahaan-anda.com/api \
-  --dart-define=PRIVACY_POLICY_URL=https://api.perusahaan-anda.com/privacy.html \
+  --dart-define=API_BASE_URL=https://absen.temuanspace.com/api \
+  --dart-define=PRIVACY_POLICY_URL=https://absen.temuanspace.com/privacy.html \
   --dart-define=SUPPORT_EMAIL=hr@perusahaan-anda.com
 ```
 
